@@ -2,7 +2,10 @@ import { EAS, SchemaEncoder, TransactionSigner } from '@ethereum-attestation-ser
 import {AttestData} from './interface'
 import { ethers } from 'ethers'
 import axios from 'axios'
-import { NEXT_PUBLIC_SCHEMAUID } from '../config';
+import { NEXT_PUBLIC_SCHEMAUID, NEXT_PUBLIC_BASESCAN_API_ENDPOINT } from '../config';
+import { createPublicClient, http } from 'viem'
+import { base } from 'viem/chains'
+
 
 const onchainAttestation = async (attestObj: AttestData) => {
     try {
@@ -105,8 +108,8 @@ const getAttestationUid = async (txnId: string): Promise<any> => {
         const txnResults = txns.result 
         for (const txn of txnResults) {
             if (txn.transactionHash === txnId) {
-                //console.log(txn)
-                //console.log(txn.data)
+                console.log(txn)
+                console.log(txn.data)
                 return txn.data
             }
           }        
@@ -115,6 +118,49 @@ const getAttestationUid = async (txnId: string): Promise<any> => {
         return e
     }
 }
+const publicClient = createPublicClient({
+    chain: base,
+    transport: http()
+})
 
+const getNewAttestId = async (txnId: string): Promise<any> => {
+    try {        
+        const hash = txnId as `0x${string}`
+        const transactionReceipt = await publicClient.getTransactionReceipt({ hash })
+        
+        console.log(transactionReceipt)
+        console.log(transactionReceipt.logs[0].data)
+        return transactionReceipt.logs[0].data
 
-export {onchainAttestation, getFids, validateCollabUserInput, getTaggedData, getAttestationUid}
+    } catch (e) {
+        console.error(e)
+        return e
+    }
+}
+
+const cast = async () => {
+    const options = {
+        method: 'POST',
+        url: 'https://api.neynar.com/v2/farcaster/cast',
+        headers: {
+          accept: 'application/json',
+          api_key: process.env.NEYNAR_API_KEY,
+          'content-type': 'application/json'
+        },
+        data: {
+          signer_uuid: process.env.SIGNER_UUID,
+          text: 'GM! Watchout this space for @ottp; the BASED collaboration protocol'
+        }
+      };
+      
+      axios
+        .request(options)
+        .then(function (response) {
+          console.log(response.data);
+        })
+        .catch(function (error) {
+          console.error(error);
+        });
+}
+
+export {onchainAttestation, getFids, validateCollabUserInput, getTaggedData, getNewAttestId}
