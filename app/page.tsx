@@ -1,6 +1,7 @@
 import { getFrameMetadata } from '@coinbase/onchainkit/frame';
 import type { Metadata } from 'next';
-import { NEXT_PUBLIC_URL } from './config';
+import { NEXT_PUBLIC_OTTP_URL, NEXT_PUBLIC_URL } from './config';
+import { permanentRedirect } from 'next/navigation'
 
 const frameMetadata = getFrameMetadata({
   buttons: [
@@ -18,11 +19,11 @@ const frameMetadata = getFrameMetadata({
 })
 
 export const metadata: Metadata = {
-  title: 'OTTP: Open To The Public',
-  description: 'Collaboration Graph',
+  title: 'Open to the Public',
+  description: 'The open collaboration protocol',
   openGraph: {
-    title: 'OTTP: Open To The Public',
-    description: 'Collaboration Graph',
+    title: 'Open to the Public',
+    description: 'The open collaboration protocol',
     images: [`${NEXT_PUBLIC_URL}/ottp-frame-1a.png`],
   },
   other: {
@@ -31,6 +32,7 @@ export const metadata: Metadata = {
 }
 
 export default function Page() {
+  permanentRedirect(`${NEXT_PUBLIC_OTTP_URL}`)
   return (
     <>
       <h1>OTTP</h1>
