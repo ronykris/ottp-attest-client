@@ -1,7 +1,9 @@
+
 import { getFrameMetadata } from '@coinbase/onchainkit/frame';
 import type { Metadata } from 'next';
 import { NEXT_PUBLIC_OTTP_URL, NEXT_PUBLIC_URL } from './config';
-import { permanentRedirect } from 'next/navigation'
+import { permanentRedirect, redirect } from 'next/navigation'
+import { useEffect } from 'react';
 
 const frameMetadata = getFrameMetadata({
   buttons: [
@@ -32,10 +34,11 @@ export const metadata: Metadata = {
 }
 
 export default function Page() {
-  permanentRedirect(`${NEXT_PUBLIC_OTTP_URL}`)
+  //permanentRedirect(`${NEXT_PUBLIC_OTTP_URL}`)
   return (
     <>
-      <h1>OTTP</h1>
+      <a href="https://opentothepublic.org/"><h1>Open to the Public</h1></a>
     </>
   );
 }
+

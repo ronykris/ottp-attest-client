@@ -238,7 +238,8 @@ const getFids = async(text: string): Promise<string[]> => {
 const validateCollabUserInput = (text: string): boolean => {
     // Identify segments starting with '@' and possibly followed by any characters
     // except for spaces, punctuation, or special characters (excluding '@').
-    const segments = text.match(/@\w+/g) || [];
+    //const segments = text.match(/@\w+/g) || []; //This allowed only letters, numbers, and underscores within segments.
+    const segments = text.match(/@\w+(\.\w+)*\b/g) || []; //This updated regular expression allows for segments starting with "@" followed by any combination of letters, numbers, underscores, and periods.
 
     // Validate that the original text only contains the valid segments and separators.
     // Rebuild what the valid text should look like from the segments.
@@ -246,11 +247,15 @@ const validateCollabUserInput = (text: string): boolean => {
 
     // Further process the text to remove all valid segments, leaving only separators.
     // This step checks if there are any extra characters or segments that don't start with '@'.
-    const remainingText = text.replace(/@\w+/g, '').trim();
+    //const remainingText = text.replace(/@\w+/g, '').trim();
+    const remainingText = text.replace(/@\w+(\.\w+)*\b/g, '').trim(); // The updated regular expression will allow a dot
+
 
     // Check if the remaining text contains only spaces, punctuation, or special characters (excluding '@').
     // This can be adjusted based on the specific separators you expect between words.
-    const isValidSeparators = remainingText.length === 0 || /^[^@\w]+$/g.test(remainingText);
+    //const isValidSeparators = remainingText.length === 0 || /^[^@\w]+$/g.test(remainingText);
+    const isValidSeparators = remainingText.length === 0 || /^[^@\w.]+$/g.test(remainingText); //It removes dot as a separater
+
 
     // Ensure every identified segment starts with '@' and contains no additional '@'.
     const isValidSegments = segments.every(segment => segment.startsWith('@') && !segment.slice(1).includes('@'));
