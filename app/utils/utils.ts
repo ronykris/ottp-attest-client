@@ -208,12 +208,17 @@ const getFidFromFname = async (fname: string): Promise<string> => {
 }
 
 const getTaggedData = (text: string): string[] => {
-    const taggedDataPattern = /@\w+/g            
-    const matches = text.match(taggedDataPattern)            
-    if (!matches) {
-        return [];
+    try {
+        //const taggedDataPattern = /@\w+/g            
+        const taggedDataPattern = /@[\w.-]+/g //fetches tagged data with dot and hyphens     
+        const matches = text.match(taggedDataPattern)            
+        if (!matches) {
+            return [];
+        }
+        return matches.map(taggedData => taggedData.substring(1));
+    } catch (err) {
+        throw(err)
     }
-    return matches.map(taggedData => taggedData.substring(1));
 }
 
 const getFids = async(text: string): Promise<string[]> => {
@@ -239,7 +244,9 @@ const validateCollabUserInput = (text: string): boolean => {
     // Identify segments starting with '@' and possibly followed by any characters
     // except for spaces, punctuation, or special characters (excluding '@').
     //const segments = text.match(/@\w+/g) || []; //This allowed only letters, numbers, and underscores within segments.
-    const segments = text.match(/@\w+(\.\w+)*\b/g) || []; //This updated regular expression allows for segments starting with "@" followed by any combination of letters, numbers, underscores, and periods.
+    //const segments = text.match(/@\w+(\.\w+)*\b/g) || []; //This updated regular expression allows for segments starting with "@" followed by any combination of letters, numbers, underscores, and periods.
+    const regex = /@[a-zA-Z0-9_.-]+-?\b/g //Updated regex to allow usernames starting with @ followed by alphanumeric characters, dot, underscore or hyphen
+    const segments = text.match(regex) || [];
 
     // Validate that the original text only contains the valid segments and separators.
     // Rebuild what the valid text should look like from the segments.
@@ -248,18 +255,19 @@ const validateCollabUserInput = (text: string): boolean => {
     // Further process the text to remove all valid segments, leaving only separators.
     // This step checks if there are any extra characters or segments that don't start with '@'.
     //const remainingText = text.replace(/@\w+/g, '').trim();
-    const remainingText = text.replace(/@\w+(\.\w+)*\b/g, '').trim(); // The updated regular expression will allow a dot
-
+    //const remainingText = text.replace(/@\w+(\.\w+)*\b/g, '').trim(); // The updated regular expression will allow a dot
+    const remainingText = text.replace(regex, '').trim(); 
 
     // Check if the remaining text contains only spaces, punctuation, or special characters (excluding '@').
     // This can be adjusted based on the specific separators you expect between words.
     //const isValidSeparators = remainingText.length === 0 || /^[^@\w]+$/g.test(remainingText);
-    const isValidSeparators = remainingText.length === 0 || /^[^@\w.]+$/g.test(remainingText); //It removes dot as a separater
-
-
+    //const isValidSeparators = remainingText.length === 0 || /^[^@\w.]+$/g.test(remainingText); //It removes dot as a separater
+    const isValidSeparators = remainingText.length === 0 || /^[^@\w.-]+$/g.test(remainingText);
+    
     // Ensure every identified segment starts with '@' and contains no additional '@'.
+    //const isValidSegments = segments.every(segment => segment.startsWith('@') && !segment.slice(1).includes('@'));
     const isValidSegments = segments.every(segment => segment.startsWith('@') && !segment.slice(1).includes('@'));
-
+    
     // The text is valid if the separators are valid, and all segments start with '@' without additional '@'.
     return isValidSegments && isValidSeparators;
 };
