@@ -36,6 +36,9 @@ const getHtmlElement = async(fromFid: string, toFids: string, text: string) => {
               font-weight: 500;
               margin-top: 10px; /*
               margin-bottom: 20px; /* Space after protocol text */
+              top: 50px;
+              left: 20px
+
           }
           
           .username, .mention {
@@ -56,38 +59,46 @@ const getHtmlElement = async(fromFid: string, toFids: string, text: string) => {
           .submitted-line {
               display: flex; /* Use flex to keep inline nature */
               flex-wrap: wrap; /* Allow contents to wrap like inline elements */
-              margin-top: 20px; /* Space after username
+              margin-top: 10px; /* Space after username
               margin-bottom: 0.75em; /* Space after each attestation line */
               color: #000; /* Default text color */
+              top: 70px;
+              left: 20px;
           }
     
           .collab-line {
               display: flex; /* Use flex to keep inline nature */
               flex-wrap: wrap; /* Allow contents to wrap like inline elements */
-              margin-top: 10px; /* Space after username
+              margin-top: 1px; /* Space after username
               margin-bottom: 0.75em; /* Space after each attestation line */
               color: #000; /* Default text color */
+              top: 71px;
+              left: 20px;
           }
           
           .attestation-text {
               display: flex; /* Use flex to keep inline nature */
               flex-wrap: wrap; /* Allow contents to wrap like inline elements */
-              margin-top: 10px; /* Space after username
+              margin-top: 1px; /* Space after username
               margin-bottom: 0.75em; /* Space after each attestation line */
               color: #000; /* Default text color */
+              top: 72px;
+              left: 20px;
           }
     
           .confirmation-notice {
               color: #000;
               font-size: 14px;
-              margin-top: 4em; /* Space before the confirmation notice */
+              margin-top: 1px; /* Space before the confirmation notice */
+              top: 170px;
+              left: 20px;
           }
           
           @media screen and (max-width: 768px) {
               .confirmation-card {
                   width: 80%; /* Adjust card size for smaller screens */
                   margin-left: 20px; /* Adjust margin for smaller screens */
-                  padding: 20px;
+                  padding: 10px;
               }
             }
       </style>
@@ -235,7 +246,7 @@ const publicClient = createPublicClient({
     transport: http()
 })
 
-const getAttestandOttpId = async (txnId: string): Promise<{attestUid: string; ottpId: number|null} | any > => {
+const getAttestandOttpId = async (txnId: string, fid: number): Promise<{attestUid: string; ottpId: number} | any > => {
     try {        
         const hash = txnId as `0x${string}`
         const transactionReceipt = await publicClient.waitForTransactionReceipt({ hash })
@@ -250,7 +261,8 @@ const getAttestandOttpId = async (txnId: string): Promise<{attestUid: string; ot
             return {attestUid, ottpId: parseInt(oidHex as string, 16)}
         }
         else {
-            return {attestUid, ottpId: null}
+            const ottpId = await ottp.getOttpId(fid)
+            return {attestUid, ottpId: ottpId}
         }
     } catch (e) {
         console.error(e)
