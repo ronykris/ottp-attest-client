@@ -6,3 +6,4 @@ package-lock.json
 build
 .dockerignore
 ottp-attest-verify
+ottp-warp-client
