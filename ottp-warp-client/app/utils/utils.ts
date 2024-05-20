@@ -334,7 +334,7 @@ const getOttpIdHtmlElement = async(fname: string, ottpId: string, attestations: 
             position: absolute;
             color: white; /* Change text color as needed */    
             font-size: 24px; /* Adjust font size as needed */
-            padding: 0 10px; 
+            padding: 0 1px; 
             box-sizing: border-box;
             display: flex;
         }
@@ -348,10 +348,10 @@ const getOttpIdHtmlElement = async(fname: string, ottpId: string, attestations: 
         }
         
         .textq1 {    
-            font-size: 32px;
+            font-size: 22px;
             color: black;
             top: 55px;
-            left: 15px;
+            left: 30px;
         }
         
         
@@ -359,21 +359,21 @@ const getOttpIdHtmlElement = async(fname: string, ottpId: string, attestations: 
             font-size: 60px;
             color: white;
             top: 0px;
-            left: 320px;
+            left: 325px;
         }
         
         .textq3 {    
             font-size: 60px;
             color: white;
             top: 150px;
-            left: 15px;
+            left: 30px;
         }
         
         .textq4 {    
             font-size: 60px;
             color: white;
             top: 150px;
-            left: 320px;
+            left: 325px;
         }
         
         /* Centering the text vertically and horizontally */
