@@ -279,6 +279,12 @@ const getFnames = async (toFids: string): Promise<string> => {
     return prefixedFnames
 }
 
+const removeDupFname = (fromFname: string, toFnames: string): string => {    
+    const fnames = toFnames.split(' ')    
+    const updatedToFnames = fnames.filter(word => word !== fromFname)
+    return updatedToFnames.join(' ');
+}
+
 const cast = async (fromFid: number, attestData: string) => {
     //console.log('From FID: ',fromFid)
     //console.log('Attest Data: ',attestData)
