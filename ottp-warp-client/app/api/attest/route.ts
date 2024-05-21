@@ -76,7 +76,7 @@ const getResponse = async (req: NextRequest): Promise<NextResponse> => {
                     }
                 ],
                 image: {
-                    src: `${NEXT_PUBLIC_URL}/ottp-frame-1a.png`,
+                    src: `${NEXT_PUBLIC_URL}/ottp-frame-3a-1.png`,
                 },
                 input: {text: 'Tag collaborators e.g. @df @v'},        
                 ogTitle: "OTTP: Shoutout!",

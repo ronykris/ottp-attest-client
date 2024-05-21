@@ -1,5 +1,5 @@
 {
-  "name": "ottp-attest-client",
+  "name": "ottp-warp-client",
   "version": "1.0",
   "scripts": {
     "build": "rm -rf .next && next build",

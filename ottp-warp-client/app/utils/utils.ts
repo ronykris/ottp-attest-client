@@ -190,17 +190,12 @@ const getFidFromFname = async (fname: string): Promise<string> => {
 }
 
 const getTaggedData = (text: string): string[] => {
-    try {
-        //const taggedDataPattern = /@\w+/g            
-        const taggedDataPattern = /@[\w.-]+/g //fetches tagged data with dot and hyphens     
-        const matches = text.match(taggedDataPattern)            
-        if (!matches) {
-            return [];
-        }
-        return matches.map(taggedData => taggedData.substring(1));
-    } catch (err) {
-        throw(err)
+    const taggedDataPattern = /@\w+/g            
+    const matches = text.match(taggedDataPattern)            
+    if (!matches) {
+        return [];
     }
+    return matches.map(taggedData => taggedData.substring(1));
 }
 
 const getFids = async(text: string): Promise<string[]> => {
@@ -225,10 +220,7 @@ const getFids = async(text: string): Promise<string[]> => {
 const validateCollabUserInput = (text: string): boolean => {
     // Identify segments starting with '@' and possibly followed by any characters
     // except for spaces, punctuation, or special characters (excluding '@').
-    //const segments = text.match(/@\w+/g) || []; //This allowed only letters, numbers, and underscores within segments.
-    //const segments = text.match(/@\w+(\.\w+)*\b/g) || []; //This updated regular expression allows for segments starting with "@" followed by any combination of letters, numbers, underscores, and periods.
-    const regex = /@[a-zA-Z0-9_.-]+-?\b/g //Updated regex to allow usernames starting with @ followed by alphanumeric characters, dot, underscore or hyphen
-    const segments = text.match(regex) || [];
+    const segments = text.match(/@\w+/g) || [];
 
     // Validate that the original text only contains the valid segments and separators.
     // Rebuild what the valid text should look like from the segments.
@@ -236,20 +228,15 @@ const validateCollabUserInput = (text: string): boolean => {
 
     // Further process the text to remove all valid segments, leaving only separators.
     // This step checks if there are any extra characters or segments that don't start with '@'.
-    //const remainingText = text.replace(/@\w+/g, '').trim();
-    //const remainingText = text.replace(/@\w+(\.\w+)*\b/g, '').trim(); // The updated regular expression will allow a dot
-    const remainingText = text.replace(regex, '').trim(); 
+    const remainingText = text.replace(/@\w+/g, '').trim();
 
     // Check if the remaining text contains only spaces, punctuation, or special characters (excluding '@').
     // This can be adjusted based on the specific separators you expect between words.
-    //const isValidSeparators = remainingText.length === 0 || /^[^@\w]+$/g.test(remainingText);
-    //const isValidSeparators = remainingText.length === 0 || /^[^@\w.]+$/g.test(remainingText); //It removes dot as a separater
-    const isValidSeparators = remainingText.length === 0 || /^[^@\w.-]+$/g.test(remainingText);
-    
+    const isValidSeparators = remainingText.length === 0 || /^[^@\w]+$/g.test(remainingText);
+
     // Ensure every identified segment starts with '@' and contains no additional '@'.
-    //const isValidSegments = segments.every(segment => segment.startsWith('@') && !segment.slice(1).includes('@'));
     const isValidSegments = segments.every(segment => segment.startsWith('@') && !segment.slice(1).includes('@'));
-    
+
     // The text is valid if the separators are valid, and all segments start with '@' without additional '@'.
     return isValidSegments && isValidSeparators;
 };
@@ -259,7 +246,7 @@ const publicClient = createPublicClient({
     transport: http()
 })
 
-const getAttestandOttpId = async (txnId: string): Promise<{attestUid: string; ottpId: number|null} | any > => {
+const getAttestandOttpId = async (txnId: string, fid: number): Promise<{attestUid: string; ottpId: number} | any > => {
     try {        
         const hash = txnId as `0x${string}`
         const transactionReceipt = await publicClient.waitForTransactionReceipt({ hash })
@@ -274,7 +261,8 @@ const getAttestandOttpId = async (txnId: string): Promise<{attestUid: string; ot
             return {attestUid, ottpId: parseInt(oidHex as string, 16)}
         }
         else {
-            return {attestUid, ottpId: null}
+            const ottpId = await ottp.getOttpId(fid)
+            return {attestUid, ottpId: ottpId}
         }
     } catch (e) {
         console.error(e)
@@ -302,7 +290,7 @@ const cast = async (fromFid: number, attestData: string) => {
     //console.log('Attest Data: ',attestData)
     const fromFname = await getFnameFromFid(fromFid)
     const toFnames = await getFnames(JSON.parse(attestData).toFids)
-    //console.log('To Fnames: ', toFnames)
+    //console.log('To Fnames: ', toFnames)    
     const vid = `v${Date.now()}`
     setVData(fromFname, toFnames, vid, attestData)
     const updatedToFnames: string = removeDupFname(fromFname, toFnames)
@@ -355,7 +343,7 @@ const getOttpIdHtmlElement = async(fname: string, ottpId: string, attestations: 
             position: absolute;
             color: white; /* Change text color as needed */    
             font-size: 24px; /* Adjust font size as needed */
-            padding: 0 10px; 
+            padding: 0 1px; 
             box-sizing: border-box;
             display: flex;
         }
@@ -369,10 +357,10 @@ const getOttpIdHtmlElement = async(fname: string, ottpId: string, attestations: 
         }
         
         .textq1 {    
-            font-size: 32px;
+            font-size: 22px;
             color: black;
             top: 55px;
-            left: 15px;
+            left: 30px;
         }
         
         
@@ -380,21 +368,21 @@ const getOttpIdHtmlElement = async(fname: string, ottpId: string, attestations: 
             font-size: 60px;
             color: white;
             top: 0px;
-            left: 320px;
+            left: 325px;
         }
         
         .textq3 {    
             font-size: 60px;
             color: white;
             top: 150px;
-            left: 15px;
+            left: 30px;
         }
         
         .textq4 {    
             font-size: 60px;
             color: white;
             top: 150px;
-            left: 320px;
+            left: 325px;
         }
         
         /* Centering the text vertically and horizontally */

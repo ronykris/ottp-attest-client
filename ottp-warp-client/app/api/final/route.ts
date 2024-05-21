@@ -12,7 +12,7 @@ const getResponse = async (req: NextRequest): Promise<NextResponse|any> => {
     console.log('TxnId: ',txnId)
     let cachedData = JSON.parse(await getData(fromFid))
 
-    const data = await getAttestandOttpId(txnId!)
+    const data = await getAttestandOttpId(txnId!, fromFid)
     if (data instanceof Error) {
         console.error(data.message)    
     } else {
@@ -37,7 +37,7 @@ const getResponse = async (req: NextRequest): Promise<NextResponse|any> => {
                         {
                             "label": "Share",
                             "action": "link",
-                            "target": `https://warpcast.com/~/compose?text=I%20just%20updated%20my%20collaboration%20graph.%20Get%20your%20OTTP%20ID%20to%20link%20up.%0A%0A&embeds[]=${NEXT_PUBLIC_URL}/api/share?ottpid=${ottpId}&fromFid=${fromFid}`,     
+                            "target": `https://warpcast.com/~/compose?text=I%20just%20updated%20my%20collaboration%20graph.%20Get%20your%20OTTP%20ID%20to%20link%20up.%0A%0A&embeds[]=${NEXT_PUBLIC_URL}%2Fapi%2Fshare%3Fottpid%3D${ottpId}%26fromFid%3D${fromFid}`,     
                         },
                         {
                             "label": "Restart",
@@ -45,7 +45,7 @@ const getResponse = async (req: NextRequest): Promise<NextResponse|any> => {
                         }
                     ],                
                     image: {
-                        src: `${NEXT_PUBLIC_URL}/ottp-frame-1d.png`,
+                        src: `${NEXT_PUBLIC_URL}/ottp-frame-3a-3.png`,
                     },
                     ogTitle: "Open to the Public",    
                     postUrl: `${NEXT_PUBLIC_URL}/api/restart`,           
@@ -69,7 +69,7 @@ const getResponse = async (req: NextRequest): Promise<NextResponse|any> => {
                         }
                     ],                
                     image: {
-                        src: `${NEXT_PUBLIC_URL}/ottp-frame-1d.png`,
+                        src: `${NEXT_PUBLIC_URL}/ottp-frame-3a-3.png`,
                     },
                     ogTitle: "Open to the Public",
                     postUrl: `${NEXT_PUBLIC_URL}/api/restart`,           
