@@ -328,6 +328,12 @@ const getFnames = async (toFids: string): Promise<string> => {
     return prefixedFnames
 }
 
+const removeDupFname = (fromFname: string, toFnames: string): string => {    
+    const fnames = toFnames.split(' ')    
+    const updatedToFnames = fnames.filter(word => word !== fromFname)
+    return updatedToFnames.join(' ');
+}
+
 const cast = async (fromFid: number, attestData: string) => {
     //console.log('From FID: ',fromFid)
     //console.log('Attest Data: ',attestData)
@@ -336,8 +342,11 @@ const cast = async (fromFid: number, attestData: string) => {
     //console.log('To Fnames: ', toFnames)
     const vid = `v${Date.now()}`
     setVData(fromFname, toFnames, vid, attestData)
-    
-    let text: string = `@${fromFname} ${toFnames} Your collaboration is onchain. Verify the attestation.\n\n (Skip if you submitted.)`
+    const updatedToFnames: string = removeDupFname(fromFname, toFnames)
+        
+    const text: string = updatedToFnames === "" 
+        ? `@${fromFname} Your attestation is onchain. Verify the attestation.\n\n (Skip if you submitted.)`
+        : `@${fromFname} ${updatedToFnames} Your collaboration is onchain. Verify the attestation.\n\n (Skip if you submitted.)`
     
     //console.log(text)
     const options = {
